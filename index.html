@@ -11,7 +11,7 @@
   <style>
     /* General Styles */
     body {
-      font-family: 'Comic Sans MS', sans-serif;
+      font-family: 'Comic Sans MS', sans-serif; 
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -207,6 +207,8 @@
   <!-- Audio Element -->
   <audio id="letter-audio"></audio>
 
+  <audio id="success-audio"></audio>
+
   <script>
     // Array of Lithuanian letters with corresponding audio file paths
     const letters = [
@@ -248,17 +250,24 @@
     const playButton = document.getElementById('play-button');
     const confettiContainer = document.getElementById('confetti-container');
     const letterAudio = document.getElementById('letter-audio');
+    const successAudio = document.getElementById('success-audio');
     const feedbackMessage = document.getElementById('feedback-message');
     const levelIndicator = document.getElementById('level-indicator');
 
     let currentLetter = null;
     let level = 1;
-    const maxLevels = 5;
+    const maxLevels = 2;
     let tried = 0;
     let firstLoad = true
 
+    // Retrieve user data
+  
     // Track letter performance for adaptive learning
-    const letterPerformance = {};
+    let letterPerformance = {};
+    const performance = localStorage.getItem('performance');
+    if (performance) {
+      letterPerformance = JSON.parse(performance);
+    }
 
     // Initialize letter performance
     letters.forEach(letter => {
@@ -329,6 +338,17 @@
       }
     }
 
+    function playSucessSound(levelComplete = false) {
+        let successAudioFiles = ['audio/tau_pavyko.m4a', 'audio/valio.m4a', 'audio/puiku.m4a'];
+        if (levelComplete) {
+          successAudioFiles = ['audio/applause.mp3'];
+        }
+        const randomIndex = Math.floor(Math.random() * successAudioFiles.length);
+        successAudio.src = successAudioFiles[randomIndex];
+        successAudio.load(); // Ensure the audio is loaded before playing
+        successAudio.play();
+    }
+
     // Create confetti effect
     function createConfetti() {
       const confettiCount = 100;
@@ -372,18 +392,28 @@
         tried = 0;
         selectedElement.classList.add('correct');
         createConfetti();
-        showFeedback('Puiku!');
+        level++;
+        const gameFinished = level > maxLevels;
+        const timeOut = gameFinished ? 5000 : 2000;
+
+        if (!gameFinished) {
+          showFeedback('Puiku!');
+          playSucessSound()
+        }
+
+        if (gameFinished) {
+            playSucessSound(true)
+            showFeedback('Sveikiname! Užbaigėte visus lygius.');
+            level = 1; // Reset level or implement further logic
+            localStorage.setItem('performance', JSON.stringify(letterPerformance));
+        }
+        
         letterPerformance[selectedLetterChar].correct += 1;
 
         setTimeout(() => {
           selectedElement.classList.remove('correct');
-          level++;
-          if (level > maxLevels) {
-            alert('Sveikiname! Užbaigėte visus lygius.');
-            level = 1; // Reset level or implement further logic
-          }
           initializeGame();
-        }, 1000);
+        }, timeOut);
       } else {
         selectedElement.classList.add('incorrect');
         showFeedback('Bandyk dar kartą!', false);
