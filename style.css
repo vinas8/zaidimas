@@ -1,0 +1,112 @@
+/* style.css */
+
+body {
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    background: #f2f2f2; /* Soft background */
+  }
+  
+  h1 {
+    color: #ff6600; /* Bright color */
+    font-size: 3em; 
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Slight shadow */
+    margin-bottom: 20px;
+  }
+  
+  #letter-container {
+    display: flex;
+    gap: 30px; 
+    margin-bottom: 30px;
+  }
+  
+  .letter {
+    background-color: #ffd700; /* Yellow-ish for attention */
+    color: #333;
+    font-size: 4em; 
+    padding: 20px 30px;
+    border-radius: 20px; /* Rounded corners */
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); /* Initial shadow */
+  }
+  
+  .letter:hover {
+    transform: scale(1.2); 
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5); /* Bigger shadow */
+  }
+  
+  .letter.correct { 
+    background-color: #4BB543;
+    animation: bounce 0.5s ease; /* Add a bounce animation */
+  }
+  
+  .letter.incorrect {
+    background-color: #ff4d4d;
+    animation: shake 0.3s ease; /* Add a shake animation */
+  }
+  
+  /* Animations */
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+  }
+  
+  #play-button {
+    background-color: #4CAF50; /* Green button */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 1.5em;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); /* Button shadow */
+    margin-bottom: 50px; /* Increased margin */
+  }
+  
+  #play-button:hover {
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5); /* Bigger shadow on hover */
+  }
+  
+
+  #confetti-container {
+    width: 100%;
+    height: 200px; /* Adjust height as needed */
+    position: absolute; /* Position confetti behind other elements */
+    top: 0;
+    left: 0;
+    overflow: hidden; /* Hide confetti that goes outside the container */
+    pointer-events: none; /* Allow clicking through the confetti */
+  }
+  
+  .confetti {
+    width: 10px;
+    height: 10px;
+    background-color: #f00; /* Default color, will be randomized */
+    position: absolute;
+    top: -10px; /* Start confetti offscreen */
+    animation: confetti-fall 3s linear forwards; /* Adjust duration for faster/slower fall */
+  }
+  
+  @keyframes confetti-fall {
+    0% {
+      transform: translate(0, 0) rotate(0deg);
+    }
+    100% {
+      transform: translate(var(--x-pos), 150vh) rotate(var(--rotation));
+    }
+  }
+  

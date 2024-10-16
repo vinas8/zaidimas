@@ -1,11 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Hello PWA</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="manifest" href="manifest.json">
+  <title>Letter Game</title>
+  <link rel="stylesheet" href="style.css"> 
 </head>
 <body>
-  <h1>Hello, world!</h1>
+  <h1>Learn the Letters!</h1>
+  <div id="confetti-container"></div>
+  <button id="play-button">Play Sound</button>
+  <div id="letter-container">
+    <div class="letter">A</div> 
+    <div class="letter">B</div> 
+    <div class="letter">C</div> 
+  </div>
+  <audio id="letter-audio" src="audio/a.m4a"></audio>
+  
+  <script src="script/audio.js"></script> 
+  <script src="script/confetti.js"></script>
+  <script src="script/game.js"></script> 
 </body>
 </html>
