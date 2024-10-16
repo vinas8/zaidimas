@@ -1,22 +1,446 @@
 <!DOCTYPE html>
-<html>
+<html lang="lt">
 <head>
-  <title>Letter Game</title>
-  <link rel="stylesheet" href="style.css"> 
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mokomės abėcėlę</title>
+  
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json">
+  
+  <style>
+    /* General Styles */
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+      overflow: hidden;
+    }
+
+    h1 {
+      color: #ffffff;
+      font-size: 3em;
+      text-align: center;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      margin-bottom: 10px;
+    }
+
+    /* Feedback Message */
+    #feedback-message {
+      font-size: 1.5em;
+      margin-bottom: 10px;
+      height: 2em;
+      color: #4BB543;
+      transition: opacity 0.5s ease;
+      opacity: 0;
+      text-align: center;
+    }
+
+    /* Level Indicator */
+    #level-indicator {
+      font-size: 1.2em;
+      margin-bottom: 20px;
+      color: #ffffff;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Play Button */
+    #play-button {
+      background-color: #FF7043;
+      border: none;
+      color: white;
+      padding: 15px 30px;
+      text-align: center;
+      text-decoration: none;
+      font-size: 1.2em;
+      border-radius: 15px;
+      cursor: pointer;
+      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+      margin-bottom: 20px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      font-weight: bold;
+    }
+
+    #play-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Letter Container */
+    #letter-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .letter {
+      background-color: #FFEB3B;
+      color: #333;
+      font-size: 3.5em;
+      padding: 20px 30px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+      user-select: none;
+      position: relative;
+      outline: none;
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 3px solid transparent;
+    }
+
+    .letter:hover, .letter:focus {
+      transform: scale(1.2);
+      box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5);
+      border-color: #FF7043;
+    }
+
+    .letter.correct {
+      background-color: #4BB543;
+      animation: bounce 0.5s ease;
+    }
+
+    .letter.incorrect {
+      background-color: #ff4d4d;
+      animation: shake 0.3s ease;
+    }
+
+    /* Animations */
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
+    /* Confetti Styles */
+    #confetti-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: transparent;
+      border-radius: 50%;
+      opacity: 0;
+      animation: confetti-fall 3s linear forwards;
+    }
+
+    @keyframes confetti-fall {
+      0% {
+        transform: translateY(-100vh) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+      }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 600px) {
+      .letter {
+        font-size: 2.5em;
+        padding: 15px 20px;
+        width: 60px;
+        height: 60px;
+      }
+
+      #play-button {
+        padding: 10px 20px;
+        font-size: 1em;
+      }
+
+      h1 {
+        font-size: 2em;
+      }
+
+      #feedback-message {
+        font-size: 1em;
+      }
+
+      #level-indicator {
+        font-size: 1em;
+      }
+    }
+
+    /* Focus Styles for Accessibility */
+    .letter:focus {
+      outline: 3px solid #FF7043;
+      transform: scale(1.2);
+      box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5);
+      border-color: #FF7043;
+    }
+  </style>
 </head>
 <body>
-  <h1>Learn the Letters!</h1>
+  <h1>Mokomės abėcėlę!</h1>
+  <div id="level-indicator">Lygis: 1</div>
+  <div id="feedback-message"></div>
+  <button id="play-button" aria-label="Klausyti raidės">Klausyti raidės</button>
+  <div id="letter-container"></div>
   <div id="confetti-container"></div>
-  <button id="play-button">Play Sound</button>
-  <div id="letter-container">
-    <div class="letter">A</div> 
-    <div class="letter">B</div> 
-    <div class="letter">C</div> 
-  </div>
-  <audio id="letter-audio" src="audio/a.m4a"></audio>
-  
-  <script src="script/audio.js"></script> 
-  <script src="script/confetti.js"></script>
-  <script src="script/game.js"></script> 
+
+  <!-- Audio Element -->
+  <audio id="letter-audio"></audio>
+
+  <script>
+    // Array of Lithuanian letters with corresponding audio file paths
+    const letters = [
+      { char: 'A', audio: 'audio/A.m4a' },
+      { char: 'Ą', audio: 'audio/Ą.m4a' },
+      { char: 'B', audio: 'audio/B.m4a' },
+      { char: 'C', audio: 'audio/C.m4a' },
+      { char: 'Č', audio: 'audio/Č.m4a' },
+      { char: 'D', audio: 'audio/D.m4a' },
+      { char: 'E', audio: 'audio/E.m4a' },
+      { char: 'Ę', audio: 'audio/Ę.m4a' },
+      { char: 'Ė', audio: 'audio/Ė.m4a' },
+      { char: 'F', audio: 'audio/F.m4a' },
+      { char: 'G', audio: 'audio/G.m4a' },
+      { char: 'H', audio: 'audio/H.m4a' },
+      { char: 'I', audio: 'audio/I.m4a' },
+      { char: 'Y', audio: 'audio/Y.m4a' },
+      { char: 'J', audio: 'audio/J.m4a' },
+      { char: 'K', audio: 'audio/K.m4a' },
+      { char: 'L', audio: 'audio/L.m4a' },
+      { char: 'M', audio: 'audio/M.m4a' },
+      { char: 'N', audio: 'audio/N.m4a' },
+      { char: 'O', audio: 'audio/O.m4a' },
+      { char: 'P', audio: 'audio/P.m4a' },
+      { char: 'R', audio: 'audio/R.m4a' },
+      { char: 'S', audio: 'audio/S.m4a' },
+      { char: 'Š', audio: 'audio/Š.m4a' },
+      { char: 'T', audio: 'audio/T.m4a' },
+      { char: 'U', audio: 'audio/U.m4a' },
+      { char: 'Ų', audio: 'audio/Ų.m4a' },
+      { char: 'Ū', audio: 'audio/Ū.m4a' },
+      { char: 'V', audio: 'audio/V.m4a' },
+      { char: 'Z', audio: 'audio/Z.m4a' },
+      { char: 'Ž', audio: 'audio/Ž.m4a' },
+      // Add more letters as needed
+    ];
+
+    const letterContainer = document.getElementById('letter-container');
+    const playButton = document.getElementById('play-button');
+    const confettiContainer = document.getElementById('confetti-container');
+    const letterAudio = document.getElementById('letter-audio');
+    const feedbackMessage = document.getElementById('feedback-message');
+    const levelIndicator = document.getElementById('level-indicator');
+
+    let currentLetter = null;
+    let level = 1;
+    const maxLevels = 5;
+    let tried = 0;
+    let firstLoad = true
+
+    // Track letter performance for adaptive learning
+    const letterPerformance = {};
+
+    // Initialize letter performance
+    letters.forEach(letter => {
+      letterPerformance[letter.char] = { correct: 0, incorrect: 0 };
+    });
+
+    // Function to initialize the game
+    function initializeGame() {
+      letterContainer.innerHTML = '';
+      updateLevelIndicator();
+      const shuffledLetters = shuffleArray([...letters]);
+      currentLetter = selectCurrentLetter(shuffledLetters);
+      const options = getRandomLetters(shuffledLetters, 4, currentLetter);
+      options.forEach(letter => {
+        const letterElement = document.createElement('div');
+        letterElement.classList.add('letter');
+        letterElement.textContent = letter.char;
+        letterElement.setAttribute('role', 'button');
+        letterElement.setAttribute('tabindex', '0');
+        letterElement.setAttribute('aria-label', `Raide ${letter.char}`);
+        letterContainer.appendChild(letterElement);
+      });
+      // Automatically play the sound after letters are presented
+      if (!firstLoad) {
+        setTimeout(playLetterSound, 500);
+      }
+
+      firstLoad = false;
+    }
+
+    // Shuffle array utility function (Fisher-Yates Shuffle)
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    // Select current letter based on performance (adaptive learning)
+    function selectCurrentLetter(shuffledLetters) {
+      // Prioritize letters with lower correct answers
+      shuffledLetters.sort((a, b) => {
+        const aScore = letterPerformance[a.char].correct - letterPerformance[a.char].incorrect;
+        const bScore = letterPerformance[b.char].correct - letterPerformance[b.char].incorrect;
+        return aScore - bScore;
+      });
+      // Select the letter with the lowest score
+      return shuffledLetters[0];
+    }
+
+    // Get random letters including the correct one
+    function getRandomLetters(array, count, correctLetter) {
+      const result = [correctLetter];
+      const shuffled = shuffleArray(array.filter(letter => letter.char !== correctLetter.char));
+      for (let i = 0; i < shuffled.length && result.length < count; i++) {
+        result.push(shuffled[i]);
+      }
+      return shuffleArray(result);
+    }
+
+    // Play the current letter's sound
+    function playLetterSound() {
+      if (currentLetter) {
+        letterAudio.src = currentLetter.audio;
+        letterAudio.load(); // Ensure the audio is loaded before playing
+        letterAudio.play();
+      }
+    }
+
+    // Create confetti effect
+    function createConfetti() {
+      const confettiCount = 100;
+      const colors = ['#ff5733', '#33ff57', '#3357ff', '#ff33a1', '#ffd700', '#4BB543', '#ff8c00', '#8e44ad'];
+
+      for (let i = 0; i < confettiCount; i++) {
+        const confetti = document.createElement('div');
+        confetti.classList.add('confetti');
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+        confetti.style.left = `${Math.random() * 100}vw`;
+        confetti.style.animationDuration = `${2 + Math.random() * 3}s`;
+
+        confettiContainer.appendChild(confetti);
+
+        setTimeout(() => confetti.remove(), 5000);
+      }
+    }
+
+    // Show feedback message
+    function showFeedback(message, isPositive = true) {
+      feedbackMessage.textContent = message;
+      feedbackMessage.style.color = isPositive ? '#4BB543' : '#ff4d4d';
+      feedbackMessage.style.opacity = 1;
+      setTimeout(() => {
+        feedbackMessage.style.opacity = 0;
+      }, 2000);
+    }
+
+    // Update level indicator
+    function updateLevelIndicator() {
+      levelIndicator.textContent = `Lygis: ${level}`;
+    }
+
+    // Check the user's answer
+    function checkAnswer(selectedLetterChar) {
+      const letterElements = document.querySelectorAll('.letter');
+      const selectedElement = [...letterElements].find(el => el.textContent === selectedLetterChar);
+
+      if (selectedLetterChar === currentLetter.char) {
+        tried = 0;
+        selectedElement.classList.add('correct');
+        createConfetti();
+        showFeedback('Puiku!');
+        letterPerformance[selectedLetterChar].correct += 1;
+
+        setTimeout(() => {
+          selectedElement.classList.remove('correct');
+          level++;
+          if (level > maxLevels) {
+            alert('Sveikiname! Užbaigėte visus lygius.');
+            level = 1; // Reset level or implement further logic
+          }
+          initializeGame();
+        }, 1000);
+      } else {
+        selectedElement.classList.add('incorrect');
+        showFeedback('Bandyk dar kartą!', false);
+        letterPerformance[selectedLetterChar].incorrect += 1;
+
+        if (tried === 0){
+          letterPerformance[currentLetter.char].incorrect += 1;
+        }
+
+        tried ++;
+        setTimeout(() => {
+          selectedElement.classList.remove('incorrect');
+        }, 500);
+      }
+    }
+
+    // Event Listeners
+    letterContainer.addEventListener('click', (event) => {
+      if (event.target.classList.contains('letter')) {
+        checkAnswer(event.target.textContent);
+      }
+    });
+
+    // Keyboard Navigation
+    document.addEventListener('keydown', (event) => {
+      const letters = Array.from(document.querySelectorAll('.letter'));
+      const focusedElement = document.activeElement;
+      const currentIndex = letters.indexOf(focusedElement);
+
+      if (event.key === 'ArrowRight') {
+        const nextIndex = (currentIndex + 1) % letters.length;
+        letters[nextIndex].focus();
+      } else if (event.key === 'ArrowLeft') {
+        const prevIndex = (currentIndex - 1 + letters.length) % letters.length;
+        letters[prevIndex].focus();
+      } else if (event.key === 'Enter') {
+        if (focusedElement && focusedElement.classList.contains('letter')) {
+          checkAnswer(focusedElement.textContent);
+        }
+      }
+    });
+
+    playButton.addEventListener('click', playLetterSound);
+
+    // Initialize the game on page load
+    window.onload = initializeGame;
+
+    // Register Service Worker for PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('service-worker.js').then(registration => {
+          console.log('ServiceWorker registration successful with scope: ', registration.scope);
+        }, err => {
+          console.log('ServiceWorker registration failed: ', err);
+        });
+      });
+    }
+  </script>
 </body>
 </html>
