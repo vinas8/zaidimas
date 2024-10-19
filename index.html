@@ -1,17 +1,21 @@
 <!DOCTYPE html>
 <html lang="lt">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <img id="completion-image" src="img/owl1.jpeg" alt="Congratulations"
+    style="display: none; height: 100px; width: 100px; position: absolute; top: 20px; z-index: 100;" />
+
   <title>Mokomės abėcėlę</title>
-  
+
   <!-- PWA Manifest -->
   <link rel="manifest" href="manifest.json">
-  
+
   <style>
     /* General Styles */
     body {
-      font-family: 'Comic Sans MS', sans-serif; 
+      font-family: 'Comic Sans MS', sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -21,6 +25,19 @@
       background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
       overflow: hidden;
     }
+
+    #completion-image {
+      display: none;
+      /* Hide by default */
+      position: absolute;
+      top: 20px;
+      /* Adjust the top position as needed */
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      /* Ensure it's above other elements */
+    }
+
 
     h1 {
       color: #ffffff;
@@ -100,7 +117,8 @@
       border: 3px solid transparent;
     }
 
-    .letter:hover, .letter:focus {
+    .letter:hover,
+    .letter:focus {
       transform: scale(1.2);
       box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5);
       border-color: #FF7043;
@@ -118,14 +136,31 @@
 
     /* Animations */
     @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-20px); }
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-20px);
+      }
     }
 
     @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-5px); }
-      75% { transform: translateX(5px); }
+
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      25% {
+        transform: translateX(-5px);
+      }
+
+      75% {
+        transform: translateX(5px);
+      }
     }
 
     /* Confetti Styles */
@@ -154,6 +189,7 @@
         transform: translateY(-100vh) rotate(0deg);
         opacity: 1;
       }
+
       100% {
         transform: translateY(100vh) rotate(720deg);
         opacity: 0;
@@ -196,6 +232,7 @@
     }
   </style>
 </head>
+
 <body>
   <h1>Mokomės abėcėlę!</h1>
   <div id="level-indicator">Lygis: 1</div>
@@ -261,7 +298,7 @@
     let firstLoad = true
 
     // Retrieve user data
-  
+
     // Track letter performance for adaptive learning
     let letterPerformance = {};
     const performance = localStorage.getItem('performance');
@@ -339,14 +376,14 @@
     }
 
     function playSucessSound(levelComplete = false) {
-        let successAudioFiles = ['audio/tau_pavyko.m4a', 'audio/valio.m4a', 'audio/puiku.m4a'];
-        if (levelComplete) {
-          successAudioFiles = ['audio/applause.mp3'];
-        }
-        const randomIndex = Math.floor(Math.random() * successAudioFiles.length);
-        successAudio.src = successAudioFiles[randomIndex];
-        successAudio.load(); // Ensure the audio is loaded before playing
-        successAudio.play();
+      let successAudioFiles = ['audio/tau_pavyko.m4a', 'audio/valio.m4a', 'audio/puiku.m4a'];
+      if (levelComplete) {
+        successAudioFiles = ['audio/applause.mp3'];
+      }
+      const randomIndex = Math.floor(Math.random() * successAudioFiles.length);
+      successAudio.src = successAudioFiles[randomIndex];
+      successAudio.load(); // Ensure the audio is loaded before playing
+      successAudio.play();
     }
 
     // Create confetti effect
@@ -402,12 +439,23 @@
         }
 
         if (gameFinished) {
-            playSucessSound(true)
-            showFeedback('Sveikiname! Užbaigėte visus lygius.');
-            level = 1; // Reset level or implement further logic
-            localStorage.setItem('performance', JSON.stringify(letterPerformance));
+          playSucessSound(true);
+          showFeedback('Sveikiname! Užbaigėte visus lygius.');
+
+          // Show the completion image
+          const completionImage = document.getElementById('completion-image');
+          completionImage.style.display = 'block'; // Show the image
+
+          // Optionally hide the image after a few seconds
+          setTimeout(() => {
+            completionImage.style.display = 'none';
+          }, 3000); // Adjust duration as needed
+
+          level = 1; // Reset level or implement further logic
+          localStorage.setItem('performance', JSON.stringify(letterPerformance));
+
         }
-        
+
         letterPerformance[selectedLetterChar].correct += 1;
 
         setTimeout(() => {
@@ -419,11 +467,11 @@
         showFeedback('Bandyk dar kartą!', false);
         letterPerformance[selectedLetterChar].incorrect += 1;
 
-        if (tried === 0){
+        if (tried === 0) {
           letterPerformance[currentLetter.char].incorrect += 1;
         }
 
-        tried ++;
+        tried++;
         setTimeout(() => {
           selectedElement.classList.remove('incorrect');
         }, 500);
@@ -473,4 +521,5 @@
     }
   </script>
 </body>
+
 </html>
