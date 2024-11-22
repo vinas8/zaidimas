@@ -4,8 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <div id="badges" >
-     
+  <div id="badges">
+
   </div>
 
   <title>Mokomės abėcėlę</title>
@@ -14,6 +14,24 @@
   <link rel="manifest" href="manifest.json">
 
   <style>
+    #badges {
+      display: flex;
+      flex-wrap: wrap;
+      /* Allows items to wrap to the next line */
+      gap: 10px;
+      /* Adds space between the images */
+      justify-content: center;
+      /* Centers the images horizontally */
+    }
+
+    #badges img {
+      display: none;
+      height: 100px;
+      /* Set the size of each image */
+      width: 100px;
+      z-index: 100;
+    }
+
     /* General Styles */
     body {
       font-family: 'Comic Sans MS', sans-serif;
@@ -294,9 +312,10 @@
 
     let currentLetter = null;
     let level = 1;
-    const maxLevels = 1;
+    const maxLevels = 10;
     let tried = 0;
     let firstLoad = true
+    let currentIndex = 0;
 
     // Retrieve user data
 
@@ -334,16 +353,56 @@
       }
 
       firstLoad = false;
-      
-      
+      loadAndDisplayBadges();
+    }
+    // Function to create an image and append it to the badges div
+    function createImage(fileName) {
       const img = document.createElement('img');
-      img.src = 'img/badges/owl1.jpeg';
-      img.style = " height: 100px; width: 100px; position: absolute; top: 20px; z-index: 100;"
- /**      <img id="completion-image" src="img/badges/owl1.jpg" alt="Congratulations"
-    style="display: none; height: 100px; width: 100px; position: absolute; top: 20px; z-index: 100;" />
-      **/
+      img.src = `img/badges/${fileName}`; // Use the fileName passed to the function
+      img.alt = fileName; // Set the alt attribute for accessibility
       let badgesDiv = document.getElementById('badges');
       badgesDiv.appendChild(img);
+    }
+
+    // Assuming fetchFileNames() is a function that returns an array of file names
+    async function loadAndDisplayBadges() {
+      const names = await fetchFileNames();  // Fetch the file names (async call)
+
+      // Iterate through the array of names and create images for each one
+      names.forEach((fileName) => {
+        createImage(fileName);
+      });
+    }
+
+    async function fetchFileNames() {
+      const apiUrl = 'https://api.github.com/repos/vinas8/zaidimas/contents/img/badges';
+
+      try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        // Extract file names
+        const fileNames = data.map(file => file.name);
+        console.log(fileNames);
+        return fileNames;
+      } catch (error) {
+        console.error('Error fetching file names:', error);
+        return [];
+      }
+    }
+
+    // Function to show the image at the current index
+    function showNextImage() {
+      const allImages = document.getElementById('badges').getElementsByTagName('img');
+
+      // Ensure the current index is within bounds
+      if (currentIndex < allImages.length) {
+        allImages[currentIndex].style.display = 'block'; // Unhide the image
+        currentIndex++; // Increment the index
+      } 
     }
 
     // Shuffle array utility function (Fisher-Yates Shuffle)
@@ -453,13 +512,11 @@
           playSucessSound(true);
           showFeedback('Sveikiname! Užbaigėte visus lygius.');
 
-          // Show the completion image
-          const completionImage = document.getElementById('completion-image');
-          completionImage.style.display = 'block'; // Show the image
+
+          showNextImage()
 
           level = 1; // Reset level or implement further logic
           localStorage.setItem('performance', JSON.stringify(letterPerformance));
-
         }
 
         letterPerformance[selectedLetterChar].correct += 1;
