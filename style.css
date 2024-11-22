@@ -1,112 +1,235 @@
-/* style.css */
+#badges {
+  display: flex;
+  flex-wrap: wrap;
+  /* Allows items to wrap to the next line */
+  gap: 10px;
+  /* Adds space between the images */
+  justify-content: center;
+  /* Centers the images horizontally */
+}
 
+#badges img {
+  display: none;
+  height: 100px;
+  /* Set the size of each image */
+  width: 100px;
+  z-index: 100;
+}
+
+/* General Styles */
 body {
-    font-family: 'Arial', sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    margin: 0;
-    background: #f2f2f2; /* Soft background */
-  }
-  
-  h1 {
-    color: #ff6600; /* Bright color */
-    font-size: 3em; 
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* Slight shadow */
-    margin-bottom: 20px;
-  }
-  
-  #letter-container {
-    display: flex;
-    gap: 30px; 
-    margin-bottom: 30px;
-  }
-  
-  .letter {
-    background-color: #ffd700; /* Yellow-ish for attention */
-    color: #333;
-    font-size: 4em; 
-    padding: 20px 30px;
-    border-radius: 20px; /* Rounded corners */
-    cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); /* Initial shadow */
-  }
-  
-  .letter:hover {
-    transform: scale(1.2); 
-    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5); /* Bigger shadow */
-  }
-  
-  .letter.correct { 
-    background-color: #4BB543;
-    animation: bounce 0.5s ease; /* Add a bounce animation */
-  }
-  
-  .letter.incorrect {
-    background-color: #ff4d4d;
-    animation: shake 0.3s ease; /* Add a shake animation */
-  }
-  
-  /* Animations */
-  @keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-  }
-  
-  @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    75% { transform: translateX(5px); }
-  }
-  
-  #play-button {
-    background-color: #4CAF50; /* Green button */
-    border: none;
-    color: white;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 1.5em;
-    border-radius: 10px;
-    cursor: pointer;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); /* Button shadow */
-    margin-bottom: 50px; /* Increased margin */
-  }
-  
-  #play-button:hover {
-    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5); /* Bigger shadow on hover */
-  }
-  
+  font-family: 'Comic Sans MS', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  margin: 0;
+  background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+  overflow: hidden;
+}
 
-  #confetti-container {
-    width: 100%;
-    height: 200px; /* Adjust height as needed */
-    position: absolute; /* Position confetti behind other elements */
-    top: 0;
-    left: 0;
-    overflow: hidden; /* Hide confetti that goes outside the container */
-    pointer-events: none; /* Allow clicking through the confetti */
+#completion-image {
+  display: none;
+  /* Hide by default */
+  position: absolute;
+  top: 20px;
+  /* Adjust the top position as needed */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  /* Ensure it's above other elements */
+}
+
+
+h1 {
+  color: #ffffff;
+  font-size: 3em;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  margin-bottom: 10px;
+}
+
+/* Feedback Message */
+#feedback-message {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+  height: 2em;
+  color: #4BB543;
+  transition: opacity 0.5s ease;
+  opacity: 0;
+  text-align: center;
+}
+
+/* Level Indicator */
+#level-indicator {
+  font-size: 1.2em;
+  margin-bottom: 20px;
+  color: #ffffff;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Play Button */
+#play-button {
+  background-color: #FF7043;
+  border: none;
+  color: white;
+  padding: 15px 30px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 1.2em;
+  border-radius: 15px;
+  cursor: pointer;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+  margin-bottom: 20px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  font-weight: bold;
+}
+
+#play-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+/* Letter Container */
+#letter-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.letter {
+  background-color: #FFEB3B;
+  color: #333;
+  font-size: 3.5em;
+  padding: 20px 30px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+  user-select: none;
+  position: relative;
+  outline: none;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid transparent;
+}
+
+.letter:hover,
+.letter:focus {
+  transform: scale(1.2);
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5);
+  border-color: #FF7043;
+}
+
+.letter.correct {
+  background-color: #4BB543;
+  animation: bounce 0.5s ease;
+}
+
+.letter.incorrect {
+  background-color: #ff4d4d;
+  animation: shake 0.3s ease;
+}
+
+/* Animations */
+@keyframes bounce {
+
+  0%,
+  100% {
+    transform: translateY(0);
   }
-  
-  .confetti {
-    width: 10px;
-    height: 10px;
-    background-color: #f00; /* Default color, will be randomized */
-    position: absolute;
-    top: -10px; /* Start confetti offscreen */
-    animation: confetti-fall 3s linear forwards; /* Adjust duration for faster/slower fall */
+
+  50% {
+    transform: translateY(-20px);
   }
-  
-  @keyframes confetti-fall {
-    0% {
-      transform: translate(0, 0) rotate(0deg);
-    }
-    100% {
-      transform: translate(var(--x-pos), 150vh) rotate(var(--rotation));
-    }
+}
+
+@keyframes shake {
+
+  0%,
+  100% {
+    transform: translateX(0);
   }
-  
+
+  25% {
+    transform: translateX(-5px);
+  }
+
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+/* Confetti Styles */
+#confetti-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.confetti {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: transparent;
+  border-radius: 50%;
+  opacity: 0;
+  animation: confetti-fall 3s linear forwards;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100vh) rotate(0deg);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .letter {
+    font-size: 2.5em;
+    padding: 15px 20px;
+    width: 60px;
+    height: 60px;
+  }
+
+  #play-button {
+    padding: 10px 20px;
+    font-size: 1em;
+  }
+
+  h1 {
+    font-size: 2em;
+  }
+
+  #feedback-message {
+    font-size: 1em;
+  }
+
+  #level-indicator {
+    font-size: 1em;
+  }
+}
+
+/* Focus Styles for Accessibility */
+.letter:focus {
+  outline: 3px solid #FF7043;
+  transform: scale(1.2);
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5);
+  border-color: #FF7043;
+}
