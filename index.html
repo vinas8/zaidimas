@@ -4,8 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <img id="completion-image" src="img/owl1.jpeg" alt="Congratulations"
-    style="display: none; height: 100px; width: 100px; position: absolute; top: 20px; z-index: 100;" />
+  <div id="badges" >
+     
+  </div>
 
   <title>Mokomės abėcėlę</title>
 
@@ -293,7 +294,7 @@
 
     let currentLetter = null;
     let level = 1;
-    const maxLevels = 10;
+    const maxLevels = 1;
     let tried = 0;
     let firstLoad = true
 
@@ -333,6 +334,16 @@
       }
 
       firstLoad = false;
+      
+      
+      const img = document.createElement('img');
+      img.src = 'img/badges/owl1.jpeg';
+      img.style = " height: 100px; width: 100px; position: absolute; top: 20px; z-index: 100;"
+ /**      <img id="completion-image" src="img/badges/owl1.jpg" alt="Congratulations"
+    style="display: none; height: 100px; width: 100px; position: absolute; top: 20px; z-index: 100;" />
+      **/
+      let badgesDiv = document.getElementById('badges');
+      badgesDiv.appendChild(img);
     }
 
     // Shuffle array utility function (Fisher-Yates Shuffle)
@@ -445,11 +456,6 @@
           // Show the completion image
           const completionImage = document.getElementById('completion-image');
           completionImage.style.display = 'block'; // Show the image
-
-          // Optionally hide the image after a few seconds
-          setTimeout(() => {
-            completionImage.style.display = 'none';
-          }, 3000); // Adjust duration as needed
 
           level = 1; // Reset level or implement further logic
           localStorage.setItem('performance', JSON.stringify(letterPerformance));
