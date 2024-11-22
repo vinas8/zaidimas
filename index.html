@@ -4,8 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <div id="badges" >
-     
+  <div id="badges">
+
   </div>
 
   <title>Mokomės abėcėlę</title>
@@ -334,17 +334,40 @@
       }
 
       firstLoad = false;
-      
-      
+
+      const names = fetchFileNames();
+
+
       const img = document.createElement('img');
       img.src = 'img/badges/owl1.jpeg';
       img.style = " height: 100px; width: 100px; position: absolute; top: 20px; z-index: 100;"
- /**      <img id="completion-image" src="img/badges/owl1.jpg" alt="Congratulations"
-    style="display: none; height: 100px; width: 100px; position: absolute; top: 20px; z-index: 100;" />
-      **/
+      /**      <img id="completion-image" src="img/badges/owl1.jpg" alt="Congratulations"
+         style="display: none; height: 100px; width: 100px; position: absolute; top: 20px; z-index: 100;" />
+           **/
       let badgesDiv = document.getElementById('badges');
       badgesDiv.appendChild(img);
     }
+
+    async function fetchFileNames() {
+      const apiUrl = 'https://api.github.com/repos/vinas8/zaidimas/contents/img';
+
+      try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        // Extract file names
+        const fileNames = data.map(file => file.name);
+        console.log(fileNames);
+        return fileNames;
+      } catch (error) {
+        console.error('Error fetching file names:', error);
+        return [];
+      }
+    }
+
 
     // Shuffle array utility function (Fisher-Yates Shuffle)
     function shuffleArray(array) {
