@@ -67,7 +67,7 @@
       updateLevelIndicator();
       const shuffledLetters = shuffleArray([...letters]);
       currentLetter = selectCurrentLetter(shuffledLetters);
-      const options = getRandomLetters(shuffledLetters, lettersToDisplay, currentLetter); // Use lettersToDisplay
+      const options = getRandomLetters(shuffledLetters, lettersToDisplay, currentLetter);
 
       options.forEach(letter => {
         const letterElement = document.createElement('div');
@@ -77,8 +77,61 @@
         letterElement.setAttribute('tabindex', '0');
         letterElement.setAttribute('aria-label', `Raide ${letter.char}`);
         letterContainer.appendChild(letterElement);
+
+        // Attach event listeners here for dynamically added letters
+        let isDragging = false;
+
+        letterElement.addEventListener('mousedown', () => {
+          isDragging = false; // Reset dragging state
+          console.log('mousedown triggered');
+        });
+
+        letterElement.addEventListener('mousemove', () => {
+          isDragging = true; // Dragging detected
+          console.log('mousemove triggered');
+        });
+
+        letterElement.addEventListener('mouseup', (event) => {
+          if (isDragging) {
+            console.log('mouseup triggered during drag');
+            event.target.blur(); // Remove focus
+          } else {
+            console.log('mouseup triggered without drag');
+          }
+          isDragging = false; // Reset state
+        });
+
+        letterElement.addEventListener('mouseleave', (event) => {
+          if (isDragging) {
+            console.log('mouseleave triggered during drag');
+            event.target.blur(); // Remove focus
+          } else {
+            console.log('mouseleave triggered without drag');
+          }
+          isDragging = false; // Reset state
+        });
+
+        letterElement.addEventListener('touchstart', () => {
+          isDragging = false;
+          console.log('touchstart triggered');
+        });
+
+        letterElement.addEventListener('touchmove', () => {
+          isDragging = true;
+          console.log('touchmove triggered');
+        });
+
+        letterElement.addEventListener('touchend', (event) => {
+          if (isDragging) {
+            console.log('touchend triggered during drag');
+            event.target.blur();
+          } else {
+            console.log('touchend triggered without drag');
+          }
+          isDragging = false;
+        });
       });
-      // Automatically play the sound after letters are presented
+
       if (!firstLoad) {
         setTimeout(playLetterSound, 500);
       }
@@ -86,6 +139,7 @@
       firstLoad = false;
       loadAndDisplayBadges();
     }
+
 
     // Shuffle array utility function (Fisher-Yates Shuffle)
     function shuffleArray(array) {
