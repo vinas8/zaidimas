@@ -227,11 +227,3 @@ h1 {
     font-size: 1em;
   }
 }
-
-/* Focus Styles for Accessibility */
-.letter:focus {
-  outline: 3px solid #FF7043;
-  transform: scale(1.2);
-  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5);
-  border-color: #FF7043;
-}
