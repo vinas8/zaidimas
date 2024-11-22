@@ -29,46 +29,12 @@
 
   <audio id="success-audio"></audio>
 
+  <script src="script/letters.js"></script>
+  <script src="script/confetti.js"></script>
+  <script src="script/badge.js"></script>
   <script>
-    // Array of Lithuanian letters with corresponding audio file paths
-    const letters = [
-      { char: 'A', audio: 'audio/A.m4a' },
-      { char: 'Ą', audio: 'audio/A1.m4a' },
-      { char: 'B', audio: 'audio/B.m4a' },
-      { char: 'C', audio: 'audio/C.m4a' },
-      { char: 'Č', audio: 'audio/C1.m4a' },
-      { char: 'D', audio: 'audio/D.m4a' },
-      { char: 'E', audio: 'audio/E.m4a' },
-      { char: 'Ę', audio: 'audio/E1.m4a' },
-      { char: 'Ė', audio: 'audio/E2.m4a' },
-      { char: 'F', audio: 'audio/F.m4a' },
-      { char: 'G', audio: 'audio/G.m4a' },
-      { char: 'H', audio: 'audio/H.m4a' },
-      { char: 'I', audio: 'audio/I.m4a' },
-      { char: 'Y', audio: 'audio/Y.m4a' },
-      { char: 'J', audio: 'audio/J.m4a' },
-      { char: 'K', audio: 'audio/K.m4a' },
-      { char: 'L', audio: 'audio/L.m4a' },
-      { char: 'M', audio: 'audio/M.m4a' },
-      { char: 'N', audio: 'audio/N.m4a' },
-      { char: 'O', audio: 'audio/O.m4a' },
-      { char: 'P', audio: 'audio/P.m4a' },
-      { char: 'R', audio: 'audio/R.m4a' },
-      { char: 'S', audio: 'audio/S.m4a' },
-      { char: 'Š', audio: 'audio/S1.m4a' },
-      { char: 'T', audio: 'audio/T.m4a' },
-      { char: 'U', audio: 'audio/U.m4a' },
-      { char: 'Ų', audio: 'audio/U2.m4a' },
-      { char: 'Ū', audio: 'audio/U1.m4a' },
-      { char: 'V', audio: 'audio/V.m4a' },
-      { char: 'Z', audio: 'audio/Z.m4a' },
-      { char: 'Ž', audio: 'audio/Z1.m4a' },
-      // Add more letters as needed
-    ];
-
     const letterContainer = document.getElementById('letter-container');
     const playButton = document.getElementById('play-button');
-    const confettiContainer = document.getElementById('confetti-container');
     const letterAudio = document.getElementById('letter-audio');
     const successAudio = document.getElementById('success-audio');
     const feedbackMessage = document.getElementById('feedback-message');
@@ -76,15 +42,15 @@
 
     let currentLetter = null;
     let level = 1;
-    const maxLevels = 10;
+    const maxLevels = 5;
     let tried = 0;
     let firstLoad = true
     let currentIndex = 0;
-
-    // Retrieve user data
-
+    let lettersToDisplay = 4; // Start with 4 letters
     // Track letter performance for adaptive learning
     let letterPerformance = {};
+
+
     const performance = localStorage.getItem('performance');
     if (performance) {
       letterPerformance = JSON.parse(performance);
@@ -101,7 +67,8 @@
       updateLevelIndicator();
       const shuffledLetters = shuffleArray([...letters]);
       currentLetter = selectCurrentLetter(shuffledLetters);
-      const options = getRandomLetters(shuffledLetters, 4, currentLetter);
+      const options = getRandomLetters(shuffledLetters, lettersToDisplay, currentLetter); // Use lettersToDisplay
+
       options.forEach(letter => {
         const letterElement = document.createElement('div');
         letterElement.classList.add('letter');
@@ -118,68 +85,6 @@
 
       firstLoad = false;
       loadAndDisplayBadges();
-    }
-    // Function to create an image and append it to the badges div
-    function createImage(fileName) {
-      const img = document.createElement('img');
-      img.src = `img/badges/${fileName}`; // Use the fileName passed to the function
-      img.alt = fileName; // Set the alt attribute for accessibility
-      let badgesDiv = document.getElementById('badges');
-      badgesDiv.appendChild(img);
-    }
-
-    // Assuming fetchFileNames() is a function that returns an array of file names
-    async function loadAndDisplayBadges() {
-      const names = await fetchFileNames();  // Fetch the file names (async call)
-
-      // Iterate through the array of names and create images for each one
-      names.forEach((fileName) => {
-        createImage(fileName);
-      });
-    }
-
-    async function fetchFileNames() {
-      // Check if file names are already in localStorage
-      const storedFileNames = localStorage.getItem('fileNames');
-
-      if (storedFileNames) {
-        // If file names are in localStorage, return them
-        return JSON.parse(storedFileNames);
-      }
-
-      // If not, fetch the file names from the API
-      const apiUrl = 'https://api.github.com/repos/vinas8/zaidimas/contents/img/badges';
-
-      try {
-        const response = await fetch(apiUrl);
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        // Extract file names
-        const fileNames = data.map(file => file.name);
-
-        // Store the file names in localStorage
-        localStorage.setItem('fileNames', JSON.stringify(fileNames));
-
-        return fileNames;
-      } catch (error) {
-        console.error('Error fetching file names:', error);
-        return [];
-      }
-    }
-
-
-    // Function to show the image at the current index
-    function showNextImage() {
-      const allImages = document.getElementById('badges').getElementsByTagName('img');
-
-      // Ensure the current index is within bounds
-      if (currentIndex < allImages.length) {
-        allImages[currentIndex].style.display = 'block'; // Unhide the image
-        currentIndex++; // Increment the index
-      }
     }
 
     // Shuffle array utility function (Fisher-Yates Shuffle)
@@ -233,25 +138,6 @@
       successAudio.play();
     }
 
-    // Create confetti effect
-    function createConfetti() {
-      const confettiCount = 100;
-      const colors = ['#ff5733', '#33ff57', '#3357ff', '#ff33a1', '#ffd700', '#4BB543', '#ff8c00', '#8e44ad'];
-
-      for (let i = 0; i < confettiCount; i++) {
-        const confetti = document.createElement('div');
-        confetti.classList.add('confetti');
-        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-
-        confetti.style.left = `${Math.random() * 100}vw`;
-        confetti.style.animationDuration = `${2 + Math.random() * 3}s`;
-
-        confettiContainer.appendChild(confetti);
-
-        setTimeout(() => confetti.remove(), 5000);
-      }
-    }
-
     // Show feedback message
     function showFeedback(message, isPositive = true) {
       feedbackMessage.textContent = message;
@@ -291,6 +177,7 @@
 
 
           showNextImage()
+          lettersToDisplay++;
 
           level = 1; // Reset level or implement further logic
           localStorage.setItem('performance', JSON.stringify(letterPerformance));

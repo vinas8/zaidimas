@@ -8,6 +8,11 @@
   /* Centers the images horizontally */
 }
 
+.letter.hint {
+  background-color: green; /* Highlight color for the correct letter */
+  font-weight: bold;
+}
+
 #badges img {
   display: none;
   height: 100px;
@@ -15,6 +20,9 @@
   width: 100px;
   z-index: 100;
 }
+
+
+
 
 /* General Styles */
 body {
